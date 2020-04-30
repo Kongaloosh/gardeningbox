@@ -1,5 +1,6 @@
 import configparser
 import psycopg2
+import time
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -31,3 +32,11 @@ finally:
         print("PostgreSQL connection is closed")
 
 
+def tend():
+    """Fetches sensor readings and adds them to the dbms"""
+    pass
+
+if __name__ == "__main__":
+    while True:
+        tend()              # collect data and record it
+        time.sleep(60)      # wait 60 seconds for next recording

@@ -1,5 +1,5 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Response, make_response, \
-    jsonify
+    jsonify, send_from_directory
 from jinja2 import Environment
 import flask
 import os
@@ -51,7 +51,8 @@ def fetch_report():
     headers = ['time_stamp','humidity','temperature','moistness','image']
     cur = g.db.execute("""
     SELECT *
-    FROM garden""")
+    FROM garden
+    ORDER BY garden.time DESC""")
     for row in cur.fetchall():
         print(row, entries.keys())
         for key, element in zip(headers,row):
@@ -60,6 +61,12 @@ def fetch_report():
     if request.headers.get('Accept') == "application/ld+json":  # if someone else is consuming
         return jsonify(entries)
     return render_template('dash.html', entries=entries)
+
+
+
+@app.route('/images/<path:path>')
+def image_fetcher(path):
+    return send_from_directory('images',path)
 
 
 if __name__ == '__main__':

@@ -48,7 +48,7 @@ def fetch_report():
         'moistness': [],
         'image': []
                }
-    headers = ['time_stamp','temperature','humidity','moistness','image']
+    headers = ['time_stamp','humidity','temperature','moistness','image']
     cur = g.db.execute("""
     SELECT *
     FROM garden""")

@@ -41,27 +41,26 @@ def teardown_request(exception):
 
 @app.route('/')
 def fetch_report():
-    entries = {
-        'time_stamp': [],
-        'temperature': [],
-        'humidity': [],
-        'moistness': [],
-        'image': []
-               }
-    headers = ['time_stamp','humidity','temperature','moistness','image']
-    cur = g.db.execute("""
-    SELECT *
-    FROM garden
-    ORDER BY garden.time DESC""")
-    for row in cur.fetchall():
-        print(row, entries.keys())
-        for key, element in zip(headers,row):
-            entries[key].append(element)
-
     if request.headers.get('Accept') == "application/json":  # if someone else is consuming
-        return jsonify(entries)
-    return render_template('dash.html', entries=entries)
+        entries = {
+            'time_stamp': [],
+            'temperature': [],
+            'humidity': [],
+            'moistness': [],
+            'image': []
+        }
+        headers = ['time_stamp', 'humidity', 'temperature', 'moistness', 'image']
+        cur = g.db.execute("""
+        SELECT *
+        FROM garden
+        ORDER BY garden.time DESC""")
+        for row in cur.fetchall():
+            print(row, entries.keys())
+            for key, element in zip(headers, row):
+                entries[key].append(element)
 
+        return jsonify(entries)
+    return render_template('dash.html')
 
 
 @app.route('/images/<path:path>')

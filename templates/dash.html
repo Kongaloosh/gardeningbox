@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mirror.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Chart.min.css') }}">
+
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Plant Friends</title>
 
-    {{entries}}
+    <script src="{{url_for('static', filename='js/plotter.js')}}"></script>
 
-    <img src="{{entries.image[0]}}">
 </head>
 <body>
+    <div class="d-block col-lg-6">
+        <h2>Garden</h2>
+        <h4 id="garden_temperature">Temperature</h4>
+        <h4 id="garden_moisture">Soil Moisture</h4>
+        <h4 id="garden_humidity">Humidity</h4>
+    </div>
 
+    <img id="garden_pic">
 </body>
 </html>

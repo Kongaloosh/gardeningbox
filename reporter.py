@@ -58,7 +58,7 @@ def fetch_report():
         for key, element in zip(headers,row):
             entries[key].append(element)
 
-    if request.headers.get('Accept') == "application/ld+json":  # if someone else is consuming
+    if request.headers.get('Accept') == "application/json":  # if someone else is consuming
         return jsonify(entries)
     return render_template('dash.html', entries=entries)
 

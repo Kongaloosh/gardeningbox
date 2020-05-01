@@ -1,6 +1,6 @@
 function garden_HUD(){
     // Open a new connection, using the GET request on the URL endpoint
-    fetch('/garden')
+    fetch('/')
         .then(
         function(request){
             console.log(request)

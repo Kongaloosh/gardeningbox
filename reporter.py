@@ -62,6 +62,7 @@ def fetch_report():
         return jsonify(entries)
     return render_template('dash.html')
 
+
 @app.route('/images/<path:path>')
 def image_fetcher(path):
     return send_from_directory('images',path)

@@ -1,23 +1,17 @@
 import Adafruit_DHT
+import configparser
+from contextlib import closing
+from cv2 import *
 from datetime import datetime
 import os
 import spidev  # To communicate with SPI devices
 import sqlite3
-import configparser
-from contextlib import closing
 import time
 
-config = configparser.ConfigParser()
-config.read("config.ini")
-USER = config["POSTGRES"]['user']
-PASSWORD = config["POSTGRES"]['password']
-HOST = config["POSTGRES"]['host']
-PORT = config["POSTGRES"]['port']
-DATABASE = config["POSTGRES"]['database']
-
-spi = spidev.SpiDev()  # Created an object
+spi = spidev.SpiDev()
 spi.open(0, 0)
 
+cam = VideoCapture(0)
 
 def analog_input(channel):
     spi.max_speed_hz = 1350000
@@ -48,6 +42,12 @@ def tend():
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     img_loc = None
     time_now = datetime.now()
+
+    s, img = cam.read()
+    if s:
+        img_loc = "images/{0}.jpg".format(time_now.strftime("%Y-%m-%d-%H-%M-%S"))
+        imwrite(img_loc,img)
+
     try:
         cursor = connect_db()
         postgres_insert_query = """

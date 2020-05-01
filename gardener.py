@@ -1,6 +1,9 @@
 import Adafruit_DHT
+import os
 import spidev  # To communicate with SPI devices
+import sqlite3
 import configparser
+from contextlib import closing
 import psycopg2
 import time
 
@@ -28,27 +31,17 @@ def read_moistness(channel=0):
     return (temp - 309.0) / (561.0 - 309.0)
 
 
-connection = None
-cursor = None
-try:
-    connection = psycopg2.connect(user=USER,
-                                  password=PASSWORD,
-                                  host=HOST,
-                                  port=PORT,
-                                  database=DATABASE)
+def init_db():
+    with closing(connect_db()) as db:
+        with open('garden.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
 
-    cursor = connection.cursor()
-    # Print PostgreSQL Connection properties
-    create_table_query = open("garden.sql", "r").read()
-    cursor.execute(create_table_query)
-except (Exception, psycopg2.Error) as error:
-    print("Error while connecting to PostgreSQL", error)
 
-finally:
-    if connection:
-        cursor.close()
-        connection.close()
-        print("PostgreSQL connection is closed")
+def connect_db():
+    if not os.path.exists("garden.db"):
+        init_db()
+    return sqlite3.connect("garden.db")
 
 
 def tend():
@@ -56,6 +49,7 @@ def tend():
     moistness = read_moistness()
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     img_loc = None
+    time_now = time.strftime("%b %d %Y %H:%M:%S", time.time())
 
     try:
         connection = psycopg2.connect(user=USER,
@@ -68,8 +62,10 @@ def tend():
 
 
         cursor = connection.cursor()
-        postgres_insert_query = """ INSERT INTO garden (time, humidity, temperature, soil_moisture, img_loc) VALUES (%s,%s,%s,%s)"""
-        record_to_insert = (time.time(), humidity, temperature, moistness, img_loc)
+        postgres_insert_query = """
+            INSERT INTO garden (time, humidity, temperature, soil_moisture, img_loc) 
+            VALUES (%s,%s,%s,%s)"""
+        record_to_insert = (time_now, humidity, temperature, moistness, img_loc)
         cursor.execute(postgres_insert_query, record_to_insert)
     except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)

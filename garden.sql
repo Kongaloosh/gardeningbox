@@ -1,7 +1,7 @@
 CREATE TABLE garden(
-  time timestamp primary key,
-  humidity      double precision not null,
-  temperature     double precision not null,
-  soil_moisture   double precision not null,
-  img_loc     text
+  time DATETIME primary key,
+  humidity DOUBLE PRECISION not null,
+  temperature DOUBLE PRECISION not null,
+  soil_moisture DOUBLE PRECISION not null,
+  img_loc text
 );

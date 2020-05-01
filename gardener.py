@@ -1,10 +1,10 @@
 import Adafruit_DHT
+from datetime import datetime
 import os
 import spidev  # To communicate with SPI devices
 import sqlite3
 import configparser
 from contextlib import closing
-import psycopg2
 import time
 
 config = configparser.ConfigParser()
@@ -39,8 +39,6 @@ def init_db():
 
 
 def connect_db():
-    if not os.path.exists("garden.db"):
-        init_db()
     return sqlite3.connect("garden.db")
 
 
@@ -49,25 +47,17 @@ def tend():
     moistness = read_moistness()
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     img_loc = None
-    time_now = time.strftime("%b %d %Y %H:%M:%S", time.time())
-
+    time_now = datetime.now()
+    print(time_now, humidity, temperature, moistness)
     try:
-        connection = psycopg2.connect(user=USER,
-                                      password=PASSWORD,
-                                      host=HOST,
-                                      port=PORT,
-                                      database=DATABASE
-                                      )
-
-
-
-        cursor = connection.cursor()
+        cursor = connect_db()
+        print(cursor)
         postgres_insert_query = """
             INSERT INTO garden (time, humidity, temperature, soil_moisture, img_loc) 
-            VALUES (%s,%s,%s,%s)"""
+            VALUES (?,?,?,?,?)"""
         record_to_insert = (time_now, humidity, temperature, moistness, img_loc)
         cursor.execute(postgres_insert_query, record_to_insert)
-    except (Exception, psycopg2.Error) as error:
+    except Exception as error:
         print("Error while connecting to PostgreSQL", error)
 
 

@@ -2,7 +2,6 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
     jsonify
 from jinja2 import Environment
 import flask
-import psycopg2
 import os
 import requests
 import sqlite3
@@ -25,7 +24,7 @@ def init_db():
 
 
 def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
+    return sqlite3.connect('garden.db')
 
 
 @app.before_request
@@ -44,10 +43,12 @@ def fetch_report():
     entries = []
     cur = g.db.execute("""
     SELECT *
-    FROM garden
-    ORDER BY garden.time DESC""")
-    for (row,) in cur.fetchall():
+    FROM garden""")
+    for row in cur.fetchall():
         entries.append(row)
         if len(entries) >= 20:
             break
-    return render_template('dash.html', entries)
+    return render_template('dash.html', entries=entries)
+
+if __name__ == '__main__':
+   app.run(debug=True, port=80, host='0.0.0.0')

@@ -38,17 +38,29 @@ def teardown_request(exception):
     if db is not None:
         db.close()
 
+
 @app.route('/')
 def fetch_report():
-    entries = []
+    entries = {
+        'time_stamp': [],
+        'temperature': [],
+        'humidity': [],
+        'moistness': [],
+        'image': []
+               }
+    headers = ['time_stamp','temperature','humidity','moistness','image']
     cur = g.db.execute("""
     SELECT *
     FROM garden""")
     for row in cur.fetchall():
-        entries.append(row)
-        if len(entries) >= 20:
-            break
+        print(row, entries.keys())
+        for key, element in zip(headers,row):
+            entries[key].append(element)
+
+    if request.headers.get('Accept') == "application/ld+json":  # if someone else is consuming
+        return jsonify(entries)
     return render_template('dash.html', entries=entries)
+
 
 if __name__ == '__main__':
    app.run(debug=True, port=80, host='0.0.0.0')

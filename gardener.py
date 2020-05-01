@@ -48,15 +48,12 @@ def tend():
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     img_loc = None
     time_now = datetime.now()
-    print(time_now, humidity, temperature, moistness)
     try:
         cursor = connect_db()
-        print(dir(cursor))
         postgres_insert_query = """
             INSERT INTO garden (time, humidity, temperature, soil_moisture, img_loc) 
             VALUES (?,?,?,?,?)"""
         record_to_insert = [time_now, humidity, temperature, moistness, img_loc]
-        print(postgres_insert_query)
         cursor.execute(postgres_insert_query, record_to_insert)
         cursor.commit()
     except Exception as error:

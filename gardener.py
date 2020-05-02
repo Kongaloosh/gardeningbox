@@ -42,7 +42,6 @@ def tend():
     humidity, temperature = Adafruit_DHT.read_retry(11, 4)
     img_loc = None
     time_now = datetime.now()
-
     s, img = cam.read()
     if s:
         img_loc = "images/{0}.jpg".format(time_now.strftime("%Y-%m-%d-%H-%M-%S"))

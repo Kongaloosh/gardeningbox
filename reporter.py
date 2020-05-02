@@ -58,7 +58,8 @@ def fetch_report():
             print(row, entries.keys())
             for key, element in zip(headers, row):
                 entries[key].append(element)
-
+            if len(entries['time_stamp']) >= 300:
+                break
         return jsonify(entries)
     return render_template('dash.html')
 

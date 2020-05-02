@@ -8,26 +8,35 @@
 
     <meta charset="UTF-8">
     <title>Plant Friends</title>
-
+    <script src="{{url_for('static', filename='js/Chart.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/plotter.js')}}"></script>
 
 </head>
 <body>
     <div class="container">
+        <div class="row">
             <div class="d-block col-lg-6">
                 <h2>Garden</h2>
                 <h4 id="garden_temperature">Temperature</h4>
                 <h4 id="garden_moisture">Soil Moisture</h4>
                 <h4 id="garden_humidity">Humidity</h4>
-
+            </div>
+            <div class="d-block col-lg-6"> 
                 <img id="garden_pic">
-
-                <div id="temp_chart">
-
-                </div>
             </div>
 
-
+        </div>
+        <div class="row">
+            <div id="temperature_chart" class="col-lg-4 h-100">
+                
+            </div>
+            <div id="moistness_chart" class="col-lg-4 h-100">
+                
+            </div>
+            <div  id="humidity_chart" class="col-lg-4 h-100">
+                                
+            </div>
+        </div>
     </div>
 </body>
 </html>

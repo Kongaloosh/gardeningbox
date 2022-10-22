@@ -58,7 +58,10 @@ def fetch_report():
             print(row, entries.keys())
             for key, element in zip(headers, row):
                 entries[key].append(element)
+
             if len(entries['time_stamp']) >= 300:
+                for header in ['time_stamp', 'humidity', 'temperature', 'moistness']:
+                    entries[header] = [ 0.9 * entries[i] + 0.1 * entries[i-1] for i in range(1, len(entries[header]))]
                 break
         return jsonify(entries)
     return render_template('dash.html')
